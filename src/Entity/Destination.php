@@ -2,6 +2,7 @@
 
 class Destination
 {
+    //supression of name property
     public $id;
     public $countryName;
     public $conjunction;

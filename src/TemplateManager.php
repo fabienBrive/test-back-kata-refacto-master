@@ -3,7 +3,7 @@
 class TemplateManager
 {
     /**
-     * principal function pourquoi un array pour quote alors qu'on ne passe qu'un objet quote dedans??
+     * principal function replace array data by Quote object
      */
     public function getTemplateComputed(Template $tpl, Quote $quote)
     {
@@ -22,7 +22,8 @@ class TemplateManager
 
 
     /**
-     * appelé dans getTemplateComputed, même remarque pour le tableau de quote qui ne contien que Quote
+     * call by getTemplateComputed for subject and content, global refacto (property name, indentation, structur)
+     * pass in parameter the Quote Object directly
      */
     private function computeText($text, Quote $quote)
     {
@@ -33,10 +34,9 @@ class TemplateManager
         {
             $site = SiteRepository::getInstance()->getById($quote->siteId);
             $destination = DestinationRepository::getInstance()->getById($quote->destinationId);
-            var_dump($destination);
             $user = $applicationContext->getCurrentUser();
 
-
+            // treatement for Summury
             if (strpos($text, '[quote:summary_html]') !== false || strpos($text, '[quote:summary]') !== false) {
                 
                 if ($containsSummaryHtml !== false) {
@@ -48,22 +48,19 @@ class TemplateManager
                 }
             }
 
+            // treatement for Destination
             if (strpos($text, '[quote:destination_name]') !== false) {
                 $detsinationText = $destination->conjunction .' '. $destination->countryName;
-                var_dump($detsinationText);
                 $text = str_replace('[quote:destination_name]',$detsinationText, $text);
             }
-        }
 
-        
-        if (isset($destination)){
-            $text = str_replace('[quote:destination_link]', $site->url . '/' . $destination->countryName . '//quote/' . $quote->id, $text);
-        } else {
-            $text = str_replace('[quote:destination_link]', '', $text);
+            if (isset($destination)){
+                $text = str_replace('[quote:destination_link]', $site->url . '/' . $destination->countryName . '//quote/' . $quote->id, $text);
+            } else {
+                $text = str_replace('[quote:destination_link]', '', $text);
+            }
         }
-            
-
-        
+         // treatment for User
         if(isset($user)) {
             (strpos($text, '[user:first_name]') !== false) 
             and 
