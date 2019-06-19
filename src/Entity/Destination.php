@@ -5,7 +5,6 @@ class Destination
     public $id;
     public $countryName;
     public $conjunction;
-    public $name;
     public $computerName;
 
     public function __construct($id, $countryName, $conjunction, $computerName)
