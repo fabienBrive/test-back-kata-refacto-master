@@ -2,8 +2,13 @@
 
 class TemplateManager
 {
+    /**
+     * principal function pourquoi un array pour quote alors qu'on ne passe qu'un objet quote dedans??
+     */
     public function getTemplateComputed(Template $tpl, array $data)
     {
+
+        // passer un try catch pour l'exception arréter le script si pas de template
         if (!$tpl) {
             throw new \RuntimeException('no tpl given');
         }
@@ -15,15 +20,23 @@ class TemplateManager
         return $replaced;
     }
 
+
+    /**
+     * appelé dans getTemplateComputed, même remarque pour le tableau de data qui ne contien que Quote
+     */
     private function computeText($text, array $data)
     {
+        // Récupération context (currentSite, currentUser)
         $APPLICATION_CONTEXT = ApplicationContext::getInstance();
 
+        // vérif instance sinon null
         $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
+        var_dump($quote);
 
         if ($quote)
         {
-            $_quoteFromRepository = QuoteRepository::getInstance()->getById($quote->id);
+            var_dump($_quoteFromRepository);
+            $_quoteFromRepository = QuoteRepository::getInstance()->getById($quote->id); // refacto nom variable
             $usefulObject = SiteRepository::getInstance()->getById($quote->siteId);
             $destinationOfQuote = DestinationRepository::getInstance()->getById($quote->destinationId);
 
@@ -65,7 +78,7 @@ class TemplateManager
          */
         $_user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : $APPLICATION_CONTEXT->getCurrentUser();
         if($_user) {
-            (strpos($text, '[user:first_name]') !== false) and $text = str_replace('[user:first_name]'       , ucfirst(mb_strtolower($_user->firstname)), $text);
+            (strpos($text, '[user:first_name]') !== false) and $text = str_replace('[user:first_name]', ucfirst(mb_strtolower($_user->firstname)), $text);
         }
 
         return $text;

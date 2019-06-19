@@ -17,26 +17,24 @@ require_once __DIR__ . '/../src/TemplateManager.php';
 
 $faker = \Faker\Factory::create();
 
-$template = new Template(
-    1,
-    'Votre voyage avec une agence locale [quote:destination_name]',
-    "
-Bonjour [user:first_name],
+$templateSubject = 'Votre voyage avec une agence locale [quote:destination_name]';
+$templateContent = "
+                    Bonjour [user:first_name],
 
-Merci d'avoir contacté un agent local pour votre voyage [quote:destination_name].
+                    Merci d'avoir contacté un agent local pour votre voyage [quote:destination_name].
 
-Bien cordialement,
+                    Bien cordialement,
 
-L'équipe Evaneos.com
-www.evaneos.com
-");
+                    L'équipe Evaneos.com
+                    www.evaneos.com
+
+                    "
+
+$template = new Template(1, $templateSubject, $templateContent);
+$quote = new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date());
+
 $templateManager = new TemplateManager();
 
-$message = $templateManager->getTemplateComputed(
-    $template,
-    [
-        'quote' => new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date())
-    ]
-);
+$message = $templateManager->getTemplateComputed($template, $quote);
 
 echo $message->subject . "\n" . $message->content;
